@@ -1,205 +1,78 @@
-<<<<<<< HEAD
-import {Product, Products, UnitProduct} from "./product.interface"
-import {v4 as random} from "uuid"
+import { Product, Products, UnitProduct } from "./product.interface";
+import { v4 as random } from "uuid"
 import fs from "fs"
 
 let products: Products = loadProducts();
 
-function loadProducts(): Products{
-    try{
-        const data = fs.readFileSync(".products.json", "utf-8")
-        return JSON.parse(data)
-    } catch (error){
+function loadProducts(): Products {
+    try {
+        const data = fs.readFileSync("./products.json", "utf-8");
+        return JSON.parse(data);
+    } catch (error) {
         console.log(`Error ${error}`)
-        return {}
+        return {};
     }
 }
 
-function saveProducts () {
+
+function saveProducts() {
     try {
-        fs.writeFileSync("./users.json", JSON.stringify(products), "utf-8")
-        console.log(`Products saved successfully!`)
+        fs.writeFileSync("./products.json", JSON.stringify(products), "utf-8");
+        console.log("Products saved successfully!")
     } catch (error) {
-        console.log(`Error ${error}`)
+        console.log("Error", error)
     }
+
 }
 
 export const findAll = async (): Promise<UnitProduct[]> => Object.values(products);
 
-export const findOne = async (id:string): Promise<UnitProduct> => products[id];
-
-export const create = async (userData: UnitProduct): Promise<UnitProduct | null> => {
-    let id = random()
-
-    let product = await findOne(id);
-
-    while (product){
-        id = random()
-        check_user = await findOne(id)
-    }
-
-    const salt = await bcrypt.genSalt(10);
-
-    const hashedPassword = await bcrypt.hash(userData.password, salt)
-
-    const user : UnitUser = {
-        id: id,
-        username : userData.username,
-        email : userData.email,
-        password : hashedPassword
-    };
-
-    users[id] = user;
-    saveUsers()
-
-    return user;
-}
-
-export const findByEmail = async (user_email: string): Promise<null | UnitUser> => {
-
-    const allUsers = await findAll();
-
-    const getUser = allUsers.find(result => user_email === result.email);
-
-    if (!getUser){
-        return null;
-    }
-
-    return getUser;
-};
-
-export const comparePassword = async (email : string, supplied_password : string): Promise<null | UnitUser> => {
-
-    const user = await findByEmail(email)
-
-    const decryptPassword = await bcrypt.compare(supplied_password,user!.password)
-
-    if (!decryptPassword){
-        return null
-    }
-    
-    return user
-};
-
-export const update = async (id : string, updateValues : User) : Promise<UnitUser | null> =>{
-
-    const userExists = await findOne(id)
-
-    if (!userExists) {
-        return null
-    }
-
-    if (updateValues.password){
-        const salt = await bcrypt.genSalt(10)
-        const newPass = await bcrypt.hash(updateValues.password,salt)
-
-        updateValues.password = newPass
-    }
-
-    users[id] = {
-        ...userExists,
-        ...updateValues,
-    }
-
-    saveUsers()
-
-    return users[id]
-};
-
-export const remove = async (id : string) : Promise<null | void> =>{
-    
-    const user = await findOne(id)
-
-    if (!user) {
-        return null
-    }
-
-    delete users[id]
-
-    saveUsers()
-}
-=======
-import { Product, Products, UnitProduct } from "./product.interface";
-import { v4 as random } from "uuid";
-import fs from "fs";
-
-let products: Products = loadProducts();
-
-function loadProducts(): Products {
-  try {
-    const data = fs.readFileSync(".products.json", "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.log(`Error ${error}`);
-    return {};
-  }
-}
-
-function saveProducts() {
-  try {
-    fs.writeFileSync("./users.json", JSON.stringify(products), "utf-8");
-    console.log(`Products saved successfully!`);
-  } catch (error) {
-    console.log(`Error ${error}`);
-  }
-}
-
-export const findAll = async (): Promise<UnitProduct[]> =>
-  Object.values(products);
-
 export const findOne = async (id: string): Promise<UnitProduct> => products[id];
 
-export const create = async (
-  productInfo: Product
-): Promise<null | UnitProduct> => {
-  let id = random();
+export const create = async (productInfo: Product): Promise<null | UnitProduct> => {
 
-  let product = await findOne(id);
+    let id = random()
 
-  while (product) {
-    id = random();
-    await findOne(id);
-  }
 
-  products[id] = {
-    id: id,
-    ...productInfo,
-  };
+    while (products[id]) {
+        id = random()
+    }
 
-  saveProducts();
+    products[id] = {
+        id: id,
+        ...productInfo
+    } 
 
-  return products[id];
-};
+    saveProducts();
 
-export const update = async (
-  id: string,
-  updateValues: Product
-): Promise<UnitProduct | null> => {
-  const product = await findOne(id);
+    return products[id]
+}
 
-  if (!product) {
-    return null;
-  }
+export const update = async (id : string, updateValues : Product) : Promise<UnitProduct | null> => {
+    
+    const product = await findOne(id)
 
-  products[id] = {
-    ...product,
-    ...updateValues,
-  };
+    if (!product) {
+        return null
+    }
+    products[id] = {
+        id, 
+        ...updateValues
+    }
+    saveProducts()
 
-  saveProducts();
-
-  return products[id];
-};
+    return products[id]
+}
 
 export const remove = async (id: string): Promise<null | void> => {
-  const product = await findOne(id);
 
-  if (!product) {
-    return null;
-  }
+    const product = await findOne(id)
 
-  delete products[id];
+    if (!product) {
+        return null
+    }
 
-  saveProducts();
-};
->>>>>>> e12da1b (new update for today)
+    delete products[id]
+
+    saveProducts()
+}
