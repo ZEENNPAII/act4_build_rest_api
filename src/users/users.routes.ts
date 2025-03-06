@@ -20,19 +20,21 @@ return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
 }
 })
 
-userRouter.get("/user/:id", async (req : Request, res : Response) => {
-try {
-const user : UnitUser = await database.findOne(req.params.id)
+userRouter.get("/user/:id", async (req: Request, res: Response) => {
+  try {
+    const user: UnitUser = await database.findOne(req.params.id);
 
-if (!user) {
-return res.status(StatusCodes.NOT_FOUND).json({error : `User not found!`})
-}
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: `User not found!` });
+    }
 
-return res.status(StatusCodes.OK).json(user)
-} catch (error) {
-return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
-}
-})
+    return res.status(StatusCodes.OK).json({ user });
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+});
 
 userRouter.post("/register", async (req : Request, res : Response) => {
 try {
